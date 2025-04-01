@@ -16,12 +16,21 @@ public class User {
     private Long id;
 
     private String email;
+
     private String passwordHash;
+
     private String anonUsername;
+
     private String languagePreference;
+
     private Timestamp createdAt;
+
     private Timestamp lastEntryAt;
+
+    @Column(length = 512)
     private String jwtToken;
+
     private String timezone;
+
     private String ipAddress;
 }

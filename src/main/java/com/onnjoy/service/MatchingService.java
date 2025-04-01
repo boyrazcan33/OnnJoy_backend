@@ -17,9 +17,14 @@ public class MatchingService {
     private final EmbeddingService embeddingService;
 
     @Transactional
+
     public List<Map<String, Object>> matchTherapists(Long entryId) {
-        // 1. Get entry
-        Map<String, Object> entry = jdbc.queryForMap("SELECT * FROM entries WHERE id = ?", entryId);
+        // 1. Get entry safely
+        List<Map<String, Object>> entries = jdbc.queryForList("SELECT * FROM entries WHERE id = ?", entryId);
+        if (entries.isEmpty()) {
+            throw new RuntimeException("❌ No entry found for ID: " + entryId);
+        }
+        Map<String, Object> entry = entries.get(0);
         String userText = (String) entry.get("content");
         String lang = (String) entry.get("language_code");
 
@@ -28,16 +33,16 @@ public class MatchingService {
 
         // 3. Get therapist bios in same language + join therapist info
         List<Map<String, Object>> bios = jdbc.queryForList("""
-            SELECT 
-              b.id AS bio_id,
-              b.therapist_id,
-              b.bio,
-              t.full_name,
-              t.profile_picture_url
-            FROM therapist_bios b
-            JOIN therapists t ON b.therapist_id = t.id
-            WHERE b.language_code = ?
-        """, lang);
+        SELECT 
+          b.id AS bio_id,
+          b.therapist_id,
+          b.bio,
+          t.full_name,
+          t.profile_picture_url
+        FROM therapist_bios b
+        JOIN therapists t ON b.therapist_id = t.id
+        WHERE b.language_code = ?
+    """, lang);
 
         // 4. Score and rank therapists
         List<Map<String, Object>> ranked = new ArrayList<>();
@@ -58,11 +63,12 @@ public class MatchingService {
         for (int i = 0; i < Math.min(2, ranked.size()); i++) {
             Map<String, Object> match = ranked.get(i);
             jdbc.update("""
-                INSERT INTO matches (entry_id, therapist_id, match_score, rank, created_at)
-                VALUES (?, ?, ?, ?, ?)
-            """, entryId, match.get("therapist_id"), match.get("match_score"), i + 1, LocalDateTime.now());
+            INSERT INTO matches (entry_id, therapist_id, match_score, rank, created_at)
+            VALUES (?, ?, ?, ?, ?)
+        """, entryId, match.get("therapist_id"), match.get("match_score"), i + 1, LocalDateTime.now());
         }
 
         return ranked.subList(0, Math.min(2, ranked.size()));
     }
+
 }

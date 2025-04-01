@@ -16,7 +16,6 @@ public class EntryService {
 
     public void saveEntry(String userEmail, EntryRequest request) {
         Entry entry = Entry.builder()
-                .userEmail(userEmail)
                 .language(request.getLanguage())
                 .text(request.getText())
                 .createdAt(LocalDateTime.now())

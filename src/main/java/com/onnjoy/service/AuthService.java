@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,6 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public AuthResponse signup(UserSignupRequest request) {
-        // Generate unique anonymous username
         String anonUsername = generateAnonUsername();
 
         User user = new User();
@@ -33,9 +33,10 @@ public class AuthService {
         user.setLanguagePreference(request.getLanguagePreference());
         user.setCreatedAt(Timestamp.from(Instant.now()));
 
-        userRepository.save(user);
-
         String token = jwtUtil.generateToken(user.getEmail());
+        user.setJwtToken(token);
+
+        userRepository.save(user);
 
         return new AuthResponse(token, anonUsername);
     }
@@ -44,17 +45,37 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        System.out.println("🔐 Email: " + request.getEmail());
+        System.out.println("🔐 Raw password from Postman: " + request.getPassword());
+        System.out.println("🔐 Hashed password from DB: " + user.getPasswordHash());
+        System.out.println("🔐 Match result: " + passwordEncoder.matches(request.getPassword(), user.getPasswordHash()));
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid password");
         }
 
         String token = jwtUtil.generateToken(user.getEmail());
+        user.setJwtToken(token);
+        userRepository.save(user);
+
         return new AuthResponse(token, user.getAnonUsername());
     }
 
     private String generateAnonUsername() {
-        // Placeholder: use your color-animal-number logic here
-        return "BlueWolf" + (int)(Math.random() * 900 + 100);
-    }
-}
+        String[] colors = {
+                "Blue", "Red", "Green", "Violet", "Amber", "Indigo", "Sapphire", "Gold", "Silver", "Rose"
+        };
 
+        String[] beautifulAnimals = {
+                "Swan", "Panther", "Fox", "Owl", "Deer", "Dolphin", "Peacock", "Butterfly", "Tiger", "Wolf"
+        };
+
+        Random random = new Random();
+        String color = colors[random.nextInt(colors.length)];
+        String animal = beautifulAnimals[random.nextInt(beautifulAnimals.length)];
+        int number = 100 + random.nextInt(900); // 100–999
+
+        return color + animal + number;
+    }
+
+}
