@@ -46,4 +46,4 @@ The app uses PostgreSQL with the following key tables:
 - `appointments`, `payments`, `notifications`, etc.
 
 
-There is no properties due to OPEN KEY
+There is no properties due to KEYs
