@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class AppointmentService {
 
     private final JdbcTemplate jdbc;
+    private final NotificationService notificationService;
 
     public void bookAppointment(AppointmentRequest request) {
         // Check if therapist is available on that date
@@ -34,10 +35,17 @@ public class AppointmentService {
                 Timestamp.valueOf(request.getDate().atStartOfDay()),
                 "confirmed", request.getPackageType(), Timestamp.valueOf(LocalDateTime.now()));
 
-        // Optional: remove selected date from availability
+        // Remove availability after booking
         jdbc.update("""
             DELETE FROM therapist_availability 
             WHERE therapist_id = ? AND available_date = ?
         """, request.getTherapistId(), request.getDate());
+
+        // Notify user
+        notificationService.sendNotification(
+                request.getUserId(),
+                "Your appointment has been confirmed ✅",
+                "appointment"
+        );
     }
 }
