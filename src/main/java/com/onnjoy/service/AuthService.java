@@ -45,10 +45,10 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        System.out.println("🔐 Email: " + request.getEmail());
-        System.out.println("🔐 Raw password from Postman: " + request.getPassword());
-        System.out.println("🔐 Hashed password from DB: " + user.getPasswordHash());
-        System.out.println("🔐 Match result: " + passwordEncoder.matches(request.getPassword(), user.getPasswordHash()));
+        System.out.println(" Email: " + request.getEmail());
+        System.out.println(" Raw password from Postman: " + request.getPassword());
+        System.out.println(" Hashed password from DB: " + user.getPasswordHash());
+        System.out.println(" Match result: " + passwordEncoder.matches(request.getPassword(), user.getPasswordHash()));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid password");

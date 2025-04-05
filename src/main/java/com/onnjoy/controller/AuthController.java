@@ -24,6 +24,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody UserLoginRequest request) {
+        AuthResponse response = authService.login(request);
+        System.out.println("Token generated for user " + request.getEmail() + ": " +
+                (response.getToken().length() > 15 ? response.getToken().substring(0, 15) + "..." : response.getToken()));
         return ResponseEntity.ok(authService.login(request));
     }
 }
