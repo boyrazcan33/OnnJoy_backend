@@ -27,43 +27,42 @@ public class TherapistBioController {
     public ResponseEntity<?> getTherapistDetails(@PathVariable Long id) {
         System.out.println("Received request for therapist with ID: " + id);
 
-        // First try to get from Therapist table
-        Optional<Therapist> therapistOpt = therapistRepository.findById(id);
+        // Use direct JDBC query to get therapist data with correct field names
+        List<Map<String, Object>> therapistResults = jdbc.queryForList(
+                "SELECT id, full_name, profile_picture_url FROM therapists WHERE id = ?", id);
 
-        if (therapistOpt.isEmpty()) {
+        if (therapistResults.isEmpty()) {
             System.out.println("No therapist found with ID: " + id);
             return ResponseEntity.notFound().build();
         }
 
-        Therapist therapist = therapistOpt.get();
+        // Create response with database column names
+        Map<String, Object> response = new HashMap<>(therapistResults.get(0));
 
-        // Create a response map with basic therapist details
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", therapist.getId());
-        response.put("full_name", therapist.getName());
-        response.put("language", therapist.getLanguage());
-
-        // Try to get bio from therapist_bios table if it exists
+        // Try to get bio from therapist_bios table
         try {
             List<Map<String, Object>> bioResults = jdbc.queryForList(
-                    "SELECT bio FROM therapist_bios WHERE therapist_id = ? LIMIT 1", id);
+                    "SELECT bio, language_code FROM therapist_bios WHERE therapist_id = ? LIMIT 1", id);
 
             if (!bioResults.isEmpty() && bioResults.get(0).containsKey("bio")) {
                 response.put("bio", bioResults.get(0).get("bio"));
+                response.put("language", bioResults.get(0).get("language_code"));
                 System.out.println("Found bio in therapist_bios table");
             } else {
                 // Alternative: get bio from therapists table directly
-                response.put("bio", therapist.getBio());
+                List<Map<String, Object>> therapistBio = jdbc.queryForList(
+                        "SELECT bio FROM therapists WHERE id = ?", id);
+                if (!therapistBio.isEmpty() && therapistBio.get(0).containsKey("bio")) {
+                    response.put("bio", therapistBio.get(0).get("bio"));
+                }
                 System.out.println("Using bio from therapists table");
             }
         } catch (Exception e) {
             System.out.println("Error fetching bio: " + e.getMessage());
-            // If there's any error, use the bio from the therapist object
-            response.put("bio", therapist.getBio());
         }
 
-        // Add additional fields that might be expected by the frontend
-        response.put("match_score", 0.0); // Default match score
+        // Add default match score
+        response.put("match_score", 0.0);
 
         System.out.println("Returning response: " + response);
         return ResponseEntity.ok(response);

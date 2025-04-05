@@ -8,13 +8,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
+@Table(name = "therapists")
 public class Therapist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(name = "full_name")
+    private String fullName;
 
     private String language; // 'en', 'et', 'lt', 'lv', 'ru'
 

@@ -38,7 +38,7 @@ public class TherapistBioService {
             // Return at least the basic info even without bio
             Map<String, Object> therapistData = new HashMap<>();
             therapistData.put("id", basicTherapist.get().getId());
-            therapistData.put("full_name", basicTherapist.get().getName());
+            therapistData.put("full_name", basicTherapist.get().getFullName());
             therapistData.put("bio", "Bio not available");
             therapistData.put("language", basicTherapist.get().getLanguage());
             return Optional.of(therapistData);
