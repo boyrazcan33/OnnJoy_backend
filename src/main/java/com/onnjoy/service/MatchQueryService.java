@@ -18,6 +18,7 @@ public class MatchQueryService {
             SELECT 
                 m.rank,
                 m.match_score,
+                t.id as therapist_id,  
                 t.full_name,
                 t.profile_picture_url
             FROM matches m
