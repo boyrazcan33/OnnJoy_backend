@@ -2,7 +2,7 @@
 
 ## 🎥 Demo Video
 
-[![Watch the Demo](./assets/Screenshot_20250407_074318.png)](https://vimeo.com/1073099828)
+[![Watch the Demo](Screenshot_20250407_074442.png)](https://vimeo.com/1073099828)
 
 
 
