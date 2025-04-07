@@ -1,8 +1,11 @@
 # 🛠️ Total Tech Stack
 
+
 ## 🎥 Demo Video
 
-[![Watch the Demo](Screenshot_20250407_074442.png)](https://vimeo.com/1073099828)
+<a href="https://vimeo.com/1073099828" target="_blank">
+  <img src="Screenshot_20250407_074442.png" alt="Watch the Demo" width="350"/>
+</a>
 
 
 
