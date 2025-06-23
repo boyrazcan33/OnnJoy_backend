@@ -23,7 +23,7 @@ public class TherapistBioController {
     private final TherapistRepository therapistRepository;
     private final JdbcTemplate jdbc;
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = "application/json;charset=UTF-8")
     public ResponseEntity<?> getTherapistDetails(@PathVariable Long id) {
         System.out.println("Received request for therapist with ID: " + id);
 
@@ -65,6 +65,8 @@ public class TherapistBioController {
         response.put("match_score", 0.0);
 
         System.out.println("Returning response: " + response);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json; charset=UTF-8")
+                .body(response);
     }
 }

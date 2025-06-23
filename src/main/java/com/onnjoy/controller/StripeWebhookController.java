@@ -38,7 +38,7 @@ public class StripeWebhookController {
             return ResponseEntity.status(400).body("Invalid Stripe signature");
         }
 
-        // Log the event type for debugging
+        // Log the event type for debuggging
         System.out.println("Stripe Event Received: " + event.getType());
 
         // Handle checkout.session.completed events

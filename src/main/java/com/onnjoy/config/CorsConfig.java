@@ -15,7 +15,6 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allow all origins for development
         config.setAllowCredentials(true);
         config.addAllowedOriginPattern("*"); // Use pattern instead of specific origin for development
         config.addAllowedHeader("*");

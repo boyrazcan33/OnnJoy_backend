@@ -16,7 +16,6 @@ public class AppointmentService {
     private final NotificationService notificationService;
 
     public void bookAppointment(AppointmentRequest request) {
-        // Check if therapist is available on that date
         int available = jdbc.queryForObject("""
             SELECT COUNT(*) FROM therapist_availability
             WHERE therapist_id = ? AND available_date = ?
@@ -41,7 +40,6 @@ public class AppointmentService {
             WHERE therapist_id = ? AND available_date = ?
         """, request.getTherapistId(), request.getDate());
 
-        // Notify user
         notificationService.sendNotification(
                 request.getUserId(),
                 "Your appointment has been confirmed ✅",

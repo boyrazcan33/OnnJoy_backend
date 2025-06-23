@@ -33,7 +33,7 @@ public class PaymentService {
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
                                                 .setCurrency("eur")
-                                                .setUnitAmount((long) amountInCents) // e.g. 2900 = €29
+                                                .setUnitAmount((long) amountInCents) // ex, 2900 = €29
                                                 .setProductData(
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                 .setName("OnnJoy - " + packageType + " session")

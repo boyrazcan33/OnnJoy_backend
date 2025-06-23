@@ -24,7 +24,7 @@ public class MatchingService {
         // 1. Get entry safely
         List<Map<String, Object>> entries = jdbc.queryForList("SELECT * FROM entries WHERE id = ?", entryId);
         if (entries.isEmpty()) {
-            throw new RuntimeException("❌ No entry found for ID: " + entryId);
+            throw new RuntimeException("!! No entry found for ID: " + entryId);
         }
         Map<String, Object> entry = entries.get(0);
         String userText = (String) entry.get("content");
@@ -74,7 +74,7 @@ public class MatchingService {
         // 6. Notify the user
         notificationService.sendNotification(
                 userId,
-                "You've been matched with a therapist! 🎯",
+                "You've been matched with a therapist! !",
                 "match"
         );
 
